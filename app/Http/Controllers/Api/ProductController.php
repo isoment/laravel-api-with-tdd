@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -19,6 +20,6 @@ class ProductController extends Controller
         ]);
 
         // We want to return the product with a 201 status code
-        return response()->json($product, 201);
+        return response()->json(new ProductResource($product), 201);
     }
 }

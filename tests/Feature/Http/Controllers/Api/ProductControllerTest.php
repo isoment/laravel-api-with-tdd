@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers\Api;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class ProductControllerTest extends TestCase
@@ -30,6 +31,9 @@ class ProductControllerTest extends TestCase
             'description' => $product->description,
             'price' => $product->price
         ]);
+
+        // We can use this to write to the laravel log file
+        // Log::info(1, [$response->getContent()]);
 
         // Assert that the json response has the given structure
         // and that it contains the json and has a 201 http response
