@@ -43,6 +43,7 @@ class ProductController extends Controller
     /**
      *  Update a product
      * 
+     *  @param Illuminate\Http\Request
      *  @param int product $id
      */
     public function update(Request $request, int $id)
@@ -57,5 +58,19 @@ class ProductController extends Controller
         ]);
 
         return response()->json(new ProductResource($product));
+    }
+
+    /**
+     *  Delete a product
+     * 
+     *  @param int product $id
+     */
+    public function destroy(int $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $product->delete();
+
+        return response()->json(null, 204);
     }
 }

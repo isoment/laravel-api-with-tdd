@@ -134,4 +134,38 @@ class ProductControllerTest extends TestCase
             'created_at' => $product->created_at
         ]);
     }
+
+    /**
+     *  404 is returned if a product is not found to update
+     * 
+     *  @test
+     */
+    public function if_product_to_be_deleted_is_not_found_fail_with_404()
+    {
+        $response = $this->json('DELETE', '/api/products/-1');
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     *  A product can be deleted
+     * 
+     *  @test
+     */
+    public function a_product_can_be_deleted()
+    {
+        $product = $this->createProduct();
+
+        $response = $this->json('DELETE', "/api/products/$product->id");
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'description' => $product->description,
+            'price' => $product->price,
+        ]);
+    }
 }

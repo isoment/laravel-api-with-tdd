@@ -23,3 +23,5 @@ Route::post('/products', [\App\Http\Controllers\Api\ProductController::class, 's
 Route::get('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'show']);
 
 Route::put('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'update']);
+
+Route::delete('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'destroy']);
