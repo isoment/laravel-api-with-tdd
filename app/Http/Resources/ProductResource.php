@@ -19,7 +19,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => (int) $this->price,
             'created_at' => $this->created_at
         ];
     }

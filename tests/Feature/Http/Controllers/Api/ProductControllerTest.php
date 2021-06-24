@@ -19,8 +19,6 @@ class ProductControllerTest extends TestCase
      */
     public function user_can_create_product()
     {
-        // User must be authenticated
-
         // Make a product
         $product = Product::factory()->make();
 
@@ -53,5 +51,39 @@ class ProductControllerTest extends TestCase
             'description' => $product->description,
             'price' => $product->price
         ]);
+    }
+
+    /**
+     *  If there is no product found fail with a 404 error
+     * 
+     *  @test
+     */
+    public function if_product_is_not_found_fail_with_404()
+    {
+        $response = $this->json('GET', '/api/products/-1');
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     *  A product can be shown
+     * 
+     *  @test
+     */
+    public function a_product_can_be_shown()
+    {
+        $product = $this->createProduct();
+
+        $response = $this->json('GET', "/api/products/$product->id");
+
+        $response->assertStatus(200)
+            ->assertExactJson([
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'description' => $product->description,
+                'price' => $product->price,
+                'created_at' => $product->created_at
+            ]);
     }
 }
