@@ -17,7 +17,7 @@ class ProductControllerTest extends TestCase
      *
      * @test
      */
-    public function user_can_create_product()
+    public function a_product_can_be_created()
     {
         // Make a product
         $product = Product::factory()->make();
@@ -85,5 +85,53 @@ class ProductControllerTest extends TestCase
                 'price' => $product->price,
                 'created_at' => $product->created_at
             ]);
+    }
+
+    /**
+     *  404 is returned if a product is not found to update
+     * 
+     *  @test
+     */
+    public function if_product_to_be_updated_is_not_found_fail_with_404()
+    {
+        $response = $this->json('PUT', '/api/products/-1');
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     *  A product can be updated
+     * 
+     *  @test
+     */
+    public function a_product_can_be_updated()
+    {
+        $product = $this->createProduct();
+
+        $response = $this->json('PUT', "/api/products/$product->id", [
+            'name' => $product->name . '_updated',
+            'slug' => $product->slug . '_updated',
+            'description' => $product->description . '_updated',
+            'price' => $product->price + 10
+        ]);
+
+        $response->assertStatus(200)
+            ->assertExactJson([
+                'id' => $product->id,
+                'name' => $product->name . '_updated',
+                'slug' => $product->slug . '_updated',
+                'description' => $product->description . '_updated',
+                'price' => $product->price + 10,
+                'created_at' => $product->created_at
+            ]);
+
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => $product->name . '_updated',
+            'slug' => $product->slug . '_updated',
+            'description' => $product->description . '_updated',
+            'price' => $product->price + 10,
+            'created_at' => $product->created_at
+        ]);
     }
 }

@@ -31,11 +31,30 @@ class ProductController extends Controller
     /**
      *  Show a product
      * 
-     *  @param int $id product id
+     *  @param int product $id
      */
     public function show(int $id)
     {
         $product = Product::findOrFail($id);
+
+        return response()->json(new ProductResource($product));
+    }
+
+    /**
+     *  Update a product
+     * 
+     *  @param int product $id
+     */
+    public function update(Request $request, int $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $product->update([
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'description' => $request->description,
+            'price' => $request->price
+        ]);
 
         return response()->json(new ProductResource($product));
     }
