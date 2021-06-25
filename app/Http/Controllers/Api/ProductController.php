@@ -4,11 +4,21 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductCollectionResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 
 class ProductController extends Controller
 {
+    /**
+     *  Product Index
+     */
+    public function index()
+    {
+        // We dont need to use response()->json() since we are not changing the status code
+        return new ProductCollectionResource(Product::paginate());
+    }
+
     /**
      *  Store a product
      * 

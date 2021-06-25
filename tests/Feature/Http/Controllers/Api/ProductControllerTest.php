@@ -13,6 +13,48 @@ class ProductControllerTest extends TestCase
     use RefreshDatabase;
 
     /**
+     *  @test
+     */
+    public function an_index_of_paginated_projects_can_be_returned()
+    {
+        $product1 = $this->createProduct();
+        $product2 = $this->createProduct();
+
+        $response = $this->json('GET', '/api/products');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'current_page',
+                'data' => [
+                    '*' => ['id', 'name', 'slug', 'description', 'price', 'created_at']
+                ],
+                'first_page_url',
+                'from',
+                'last_page',
+                'last_page_url',
+                'links',
+                'next_page_url',
+                'path',
+                'per_page',
+                'prev_page_url',
+                'to',
+                'total'
+            ])->assertJsonFragment([
+                'name' => $product1->name,
+                'slug' => $product1->slug,
+                'description' => $product1->description,
+                'price' => (string) $product1->price
+            ])->assertJsonFragment([
+                'name' => $product2->name,
+                'slug' => $product2->slug,
+                'description' => $product2->description,
+                'price' => (string) $product2->price
+            ]);
+        
+        // Log::info($response->getContent());
+    }
+
+    /**
      * A user can create a product.
      *
      * @test
