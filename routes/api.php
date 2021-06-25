@@ -20,10 +20,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/products', [\App\Http\Controllers\Api\ProductController::class, 'index']);
 
-Route::post('/products', [\App\Http\Controllers\Api\ProductController::class, 'store']);
-
 Route::get('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'show']);
 
-Route::put('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'update']);
+Route::middleware('auth:api')->group(function() {
+    Route::post('/products', [\App\Http\Controllers\Api\ProductController::class, 'store']);
 
-Route::delete('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'destroy']);
+    Route::put('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'update']);
+    
+    Route::delete('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'destroy']);
+});

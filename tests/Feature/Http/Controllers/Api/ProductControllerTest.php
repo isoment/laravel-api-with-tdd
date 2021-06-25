@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,8 @@ class ProductControllerTest extends TestCase
     use RefreshDatabase;
 
     /**
+     *  User can get a paginated product index
+     * 
      *  @test
      */
     public function an_index_of_paginated_projects_can_be_returned()
@@ -55,12 +58,35 @@ class ProductControllerTest extends TestCase
     }
 
     /**
+     *  Only authenticated users can access protected api routes
+     * 
+     *  @test
+     */
+    public function only_authenticated_users_can_access_protected_api_routes()
+    {
+        $product = $this->createProduct();
+
+        $create = $this->json('POST', '/api/products');
+        $create->assertStatus(401);
+
+        $update = $this->json('PUT', "/api/products/$product->id");
+        $update->assertStatus(401);
+
+        $delete = $this->json('DELETE', "/api/products/$product->id");
+        $delete->assertStatus(401);
+    }
+
+    /**
      * A user can create a product.
      *
      * @test
      */
     public function a_product_can_be_created()
     {
+        // This route is protected by the auth:api middleware guard,
+        // so we need to act as an authenticated user and specify the guard 'api'
+        $this->actingAs(User::factory()->create(), 'api');
+
         // Make a product
         $product = Product::factory()->make();
 
@@ -136,6 +162,8 @@ class ProductControllerTest extends TestCase
      */
     public function if_product_to_be_updated_is_not_found_fail_with_404()
     {
+        $this->actingAs(User::factory()->create(), 'api');
+
         $response = $this->json('PUT', '/api/products/-1');
 
         $response->assertStatus(404);
@@ -148,6 +176,8 @@ class ProductControllerTest extends TestCase
      */
     public function a_product_can_be_updated()
     {
+        $this->actingAs(User::factory()->create(), 'api');
+
         $product = $this->createProduct();
 
         $response = $this->json('PUT', "/api/products/$product->id", [
@@ -184,6 +214,8 @@ class ProductControllerTest extends TestCase
      */
     public function if_product_to_be_deleted_is_not_found_fail_with_404()
     {
+        $this->actingAs(User::factory()->create(), 'api');
+
         $response = $this->json('DELETE', '/api/products/-1');
 
         $response->assertStatus(404);
@@ -196,6 +228,8 @@ class ProductControllerTest extends TestCase
      */
     public function a_product_can_be_deleted()
     {
+        $this->actingAs(User::factory()->create(), 'api');
+
         $product = $this->createProduct();
 
         $response = $this->json('DELETE', "/api/products/$product->id");
