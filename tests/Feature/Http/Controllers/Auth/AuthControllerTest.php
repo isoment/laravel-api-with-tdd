@@ -12,7 +12,9 @@ class AuthControllerTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * 
+     *  Since we are using sqlite and refreshing the database
+     *  we need to setup passport every time the tests in this
+     *  class run.
      */
     public function setUp(): void
     {

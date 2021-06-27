@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function store(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password]))
-        {
-            $token = User::where('email', $request->email)
-                ->first()
-                ->createToken($request->email)
-                ->accessToken;
+        $token = $this->authService->tokenStore($request);
 
-            return response()->json(['token' => $token]);
-        }
+        return response()->json(['token' => $token]);
     }
 }
