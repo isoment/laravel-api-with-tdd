@@ -23,9 +23,11 @@ Route::get('/products', [\App\Http\Controllers\Api\ProductController::class, 'in
 Route::get('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'show']);
 
 Route::middleware('auth:api')->group(function() {
+
     Route::post('/products', [\App\Http\Controllers\Api\ProductController::class, 'store']);
 
     Route::put('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'update']);
     
     Route::delete('/products/{id}', [\App\Http\Controllers\Api\ProductController::class, 'destroy']);
+    
 });

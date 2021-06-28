@@ -7,9 +7,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductCollectionResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\ProductService;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     /**
      *  Product Index
      */
@@ -26,13 +34,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //  Create the product
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'description' => $request->description,
-            'price' => $request->price
-        ]);
+        // Store the product
+        $product = $this->productService->storeProduct($request);
 
         // We want to return the product with a 201 status code
         return response()->json(new ProductResource($product), 201);
@@ -58,14 +61,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        $product = Product::findOrFail($id);
-
-        $product->update([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'description' => $request->description,
-            'price' => $request->price
-        ]);
+        $product = $this->productService->updateProduct($request, $id);
 
         return response()->json(new ProductResource($product));
     }
@@ -77,9 +73,7 @@ class ProductController extends Controller
      */
     public function destroy(int $id)
     {
-        $product = Product::findOrFail($id);
-
-        $product->delete();
+        $this->productService->deleteProduct($id);
 
         return response()->json(null, 204);
     }
